@@ -1,4 +1,4 @@
-function Remove-OldFile {
+function Remove-OldItem {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $true, ValueFromPipeline = $true, ParameterSetName = "File")]

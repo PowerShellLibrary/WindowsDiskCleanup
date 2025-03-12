@@ -11,7 +11,7 @@ function Remove-TempASPNETFile {
 
     process {
         if (Test-Path $FolderPath) {
-            Get-ChildItem $FolderPath | Remove-OldFile -Days $Days -DryRun:$DryRun
+            Get-ChildItem $FolderPath | Remove-OldItem -Days $Days -DryRun:$DryRun
         }
     }
 }

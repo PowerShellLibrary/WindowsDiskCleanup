@@ -11,7 +11,7 @@ function Remove-IISLog {
 
     process {
         if (Test-Path $LogFilesFolder) {
-            Get-ChildItem $LogFilesFolder -Recurse -Filter *.log | Remove-OldFile -Days $Days -DryRun:$DryRun
+            Get-ChildItem $LogFilesFolder -Recurse -Filter *.log | Remove-OldItem -Days $Days -DryRun:$DryRun
         }
     }
 }
