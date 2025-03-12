@@ -27,7 +27,7 @@ function Remove-OldFile {
                 Write-Host "[Dry] Removing $($File.FullName)" -ForegroundColor Yellow
             }
             else {
-                Remove-Item -Path $File.FullName -Force
+                Remove-Item -Path $File.FullName -Force -Recurse
             }
         }
     }
