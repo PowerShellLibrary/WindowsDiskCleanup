@@ -5,5 +5,7 @@
 
 PowerShell module for cleaning disk space.
 
+To learn about available cmdlets head to: [**docs/Public Cmdlets**](doc/Public-Cmdlets.md)
+
 ## License
 [MIT License](LICENSE.md) © Alan Płócieniak
