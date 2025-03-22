@@ -25,5 +25,3 @@ function Get-DiskSpace {
         }
     }
 }
-
-Get-DiskSpace -SpaceType Free -Unit GB
