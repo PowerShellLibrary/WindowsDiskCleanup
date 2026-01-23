@@ -24,7 +24,8 @@ function Remove-OldItem {
 
         if (($now - $File.CreationTimeUtc).TotalDays -gt $Days) {
             if ($DryRun) {
-                Write-Host "[Dry] Removing $($File.FullName)" -ForegroundColor Yellow
+                $size = Get-ItemSize -Path $File.FullName -Unit MB
+                Write-Host "[Dry] Removing $($File.FullName) [$size MB]" -ForegroundColor Yellow
             }
             else {
                 Remove-Item -Path $File.FullName -Force -Recurse

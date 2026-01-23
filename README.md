@@ -7,5 +7,27 @@ PowerShell module for cleaning disk space.
 
 To learn about available cmdlets head to: [**docs/Public Cmdlets**](doc/Public-Cmdlets.md)
 
+## Usage examples
+
+```powershell
+# Install the module (PowerShell 5.1+ / PowerShell 7+)
+Install-Module -Name WindowsDiskCleanup -Scope CurrentUser
+
+# Import the module into the current session
+Import-Module WindowsDiskCleanup
+
+# List all commands provided by the module
+Get-Command -Module WindowsDiskCleanup
+
+# Dry run - show which IIS log files would be removed older than 100 days
+Remove-IISLog -Days 100 -DryRun
+```
+
+Alternatively, you can run complete cleanup with default settings:
+
+```powershell
+cls;.\main.ps1 -DryRun
+```
+
 ## License
 [MIT License](LICENSE.md) © Alan Płócieniak
