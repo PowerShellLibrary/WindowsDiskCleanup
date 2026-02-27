@@ -21,6 +21,19 @@ Get-Command -Module WindowsDiskCleanup
 
 # Dry run - show which IIS log files would be removed older than 100 days
 Remove-IISLog -Days 100 -DryRun
+
+# Custom cleanup
+$cleanupTargets = @(
+    @{ Path = 'C:\Packages\Artifacts'; Days = 900 }
+    @{ Path = 'C:\Resources';        Days = 365 }
+)
+
+foreach ($target in $cleanupTargets) {
+    Write-Host "[CLEANUP][$($target.Path)]"
+    $items = Get-ChildItem $target.Path
+    $items | Remove-OldItem -Days $target.Days -DryRun
+    $items | Remove-OldItem -Days $target.Days
+}
 ```
 
 Alternatively, you can run complete cleanup with default settings:
