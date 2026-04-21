@@ -22,6 +22,15 @@ Get-Command -Module WindowsDiskCleanup
 # Dry run - show which IIS log files would be removed older than 100 days
 Remove-IISLog -Days 100 -DryRun
 
+# Remove old versions of one package, keeping the latest available version
+Remove-NugetPackageVersion -PackageName 'sitecore.cms.core.content' -Days 30 -DryRun
+
+# Remove old versions for all packages in C:\nuget (keep latest version for each package)
+Remove-NugetPackageVersion -NugetFolder 'C:\nuget' -Days 30 -DryRun
+
+# Remove old versions for all packages matching a wildcard
+Remove-NugetPackageVersion -PackageName 'sitecore.cms.*' -NugetFolder 'C:\nuget' -Days 30 -DryRun
+
 # Custom cleanup
 $cleanupTargets = @(
     @{ Path = 'C:\Packages\Artifacts'; Days = 900 }
@@ -40,6 +49,18 @@ Alternatively, you can run complete cleanup with default settings:
 
 ```powershell
 cls;.\main.ps1 -DryRun
+```
+
+Run complete cleanup with NuGet package retention:
+
+```powershell
+cls;.\main.ps1 -DryRun -NugetPackages @('sitecore.cms.core.content') -NugetDays 30 -NugetFolder 'C:\nuget'
+```
+
+Clean all packages in the NuGet folder (no package list required):
+
+```powershell
+cls;.\main.ps1 -DryRun -NugetDays 30 -NugetFolder 'C:\nuget'
 ```
 
 ## License

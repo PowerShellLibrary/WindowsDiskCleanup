@@ -10,11 +10,14 @@ function Remove-OldItem {
         [Parameter(Mandatory = $true)]
         [int]$Days,
 
-        [switch]$DryRun
+        [switch]$DryRun,
+
+        [switch]$SkipSize
     )
 
     begin {
         $now = Get-Date
+        $effectiveSkipSize = $SkipSize -or ($env:WDC_SKIP_SIZE -eq '1')
     }
 
     process {
@@ -24,8 +27,15 @@ function Remove-OldItem {
 
         if (($now - $File.CreationTimeUtc).TotalDays -gt $Days) {
             if ($DryRun) {
-                $size = Get-ItemSize -Path $File.FullName -Unit MB
-                Write-Host "[Dry] Removing $($File.FullName) [$size MB]" -ForegroundColor Yellow
+                if ($effectiveSkipSize) {
+                    Write-Host "[Dry] Removing $($File.FullName)" -ForegroundColor Yellow
+                }
+                else {
+                    $sizeBytes = Get-ItemSize -Path $File.FullName
+                    $global:WDCDryRunTotalBytes += $sizeBytes
+                    $sizeMB = [math]::Round($sizeBytes / 1MB, 2)
+                    Write-Host "[Dry] Removing $($File.FullName) [$sizeMB MB]" -ForegroundColor Yellow
+                }
             }
             else {
                 Remove-Item -Path $File.FullName -Force -Recurse

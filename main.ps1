@@ -1,9 +1,16 @@
 param(
-    [switch]$DryRun
+    [switch]$DryRun,
+
+    [string[]]$NugetPackages = @(),
+
+    [string]$NugetFolder = 'C:\nuget',
+
+    [int]$NugetDays = 30
 )
 
 Import-Module .\WindowsDiskCleanup\WindowsDiskCleanup.psm1 -Force
 
+$global:WDCDryRunTotalBytes = 0
 $spaceBeforeGB = Get-DiskSpace -SpaceType Free -Unit GB
 Write-Host "Free Space Before: $spaceBeforeGB GB" -ForegroundColor Green
 
@@ -24,8 +31,33 @@ foreach ($command in $removeCommands) {
     }
 }
 
-$spaceAfterGB = Get-DiskSpace -SpaceType Free -Unit GB
-$savingsGB = [math]::Round($spaceAfterGB - $spaceBeforeGB, 2)
+$effectiveNugetPackages = @($NugetPackages | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+if ($effectiveNugetPackages.Count -eq 0) {
+    $effectiveNugetPackages = @('*')
+}
 
-Write-Host "Free Space After: $spaceAfterGB GB" -ForegroundColor Green
-Write-Host "Disk Space Freed: $savingsGB GB" -ForegroundColor Yellow
+foreach ($packageName in $effectiveNugetPackages) {
+    $nugetParams = @{
+        PackageName = $packageName
+        NugetFolder = $NugetFolder
+        Days        = $NugetDays
+    }
+
+    if ($DryRun) {
+        Write-Host "Executing Remove-NugetPackageVersion in Dry Run mode...[package=$packageName][days>$NugetDays]" -ForegroundColor Cyan
+        $nugetParams.DryRun = $true
+    }
+
+    Remove-NugetPackageVersion @nugetParams
+}
+
+if ($DryRun) {
+    $expectedSavingsGB = [math]::Round($global:WDCDryRunTotalBytes / 1GB, 2)
+    Write-Host "Expected Disk Space Savings: $expectedSavingsGB GB" -ForegroundColor Yellow
+}
+else {
+    $spaceAfterGB = Get-DiskSpace -SpaceType Free -Unit GB
+    $savingsGB = [math]::Round($spaceAfterGB - $spaceBeforeGB, 2)
+    Write-Host "Free Space After: $spaceAfterGB GB" -ForegroundColor Green
+    Write-Host "Disk Space Freed: $savingsGB GB" -ForegroundColor Yellow
+}
