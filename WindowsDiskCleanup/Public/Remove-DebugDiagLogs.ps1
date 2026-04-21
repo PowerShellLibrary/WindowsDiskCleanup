@@ -8,6 +8,9 @@ function Remove-DebugDiagLogs {
     )
 
     process {
-        Get-Item "$env:SystemDrive\Program Files\DebugDiag\Logs\DbgSVC_*.txt" | Remove-OldItem -Days $Days -DryRun:$DryRun
+        $debugDiagLogsPath = Join-Path -Path $env:SystemDrive -ChildPath 'Program Files\DebugDiag\Logs'
+        if (Test-Path $debugDiagLogsPath) {
+            Get-ChildItem -Path $debugDiagLogsPath -File -Filter 'DbgSVC*.txt' | Remove-OldItem -Days $Days -DryRun:$DryRun
+        }
     }
 }
